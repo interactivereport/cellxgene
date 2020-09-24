@@ -7,7 +7,7 @@ from urllib.parse import urlparse, quote_plus
 from server.auth.auth import AuthTypeFactory
 from server.common.config.base_config import BaseConfig
 from server.common.config import DEFAULT_SERVER_PORT, BIG_FILE_SIZE_THRESHOLD
-from server.common.errors import ConfigurationError
+from server.common.errors import ConfigurationError, DatasetAccessError
 from server.common.data_locator import discover_s3_region_name
 from server.common.utils.utils import is_port_available, find_available_port, custom_format_warning
 from server.compute import diffexp_cxg as diffexp_tiledb
@@ -42,21 +42,18 @@ class ServerConfig(BaseConfig):
             self.app__web_base_url = default_config["app"]["web_base_url"]
 
             self.authentication__type = default_config["authentication"]["type"]
-            self.authentication__params_oauth__oauth_api_base_url = default_config["authentication"]["params_oauth"][
-                "oauth_api_base_url"
-            ]
+            self.authentication__params_oauth__oauth_api_base_url = default_config["authentication"]["params_oauth"]["oauth_api_base_url"]  # noqa E501
             self.authentication__params_oauth__client_id = default_config["authentication"]["params_oauth"]["client_id"]
-            self.authentication__params_oauth__client_secret = default_config["authentication"]["params_oauth"]["client_secret"]
-            self.authentication__params_oauth__jwt_decode_options = default_config["authentication"]["params_oauth"][
-                "jwt_decode_options"]
-            self.authentication__params_oauth__session_cookie = default_config["authentication"]["params_oauth"]["session_cookie"]
+            self.authentication__params_oauth__client_secret = default_config["authentication"]["params_oauth"]["client_secret"]  # noqa E501
+            self.authentication__params_oauth__jwt_decode_options = default_config["authentication"]["params_oauth"]["jwt_decode_options"]  # noqa E501
+            self.authentication__params_oauth__session_cookie = default_config["authentication"]["params_oauth"]["session_cookie"]  # noqa E501
             self.authentication__params_oauth__cookie = default_config["authentication"]["params_oauth"]["cookie"]
 
             self.multi_dataset__dataroot = default_config["multi_dataset"]["dataroot"]
             self.multi_dataset__index = default_config["multi_dataset"]["index"]
             self.multi_dataset__allowed_matrix_types = default_config["multi_dataset"]["allowed_matrix_types"]
-            self.multi_dataset__matrix_cache__max_datasets = default_config["multi_dataset"]["matrix_cache"]["max_datasets"]
-            self.multi_dataset__matrix_cache__timelimit_s = default_config["multi_dataset"]["matrix_cache"]["timelimit_s"]
+            self.multi_dataset__matrix_cache__max_datasets = default_config["multi_dataset"]["matrix_cache"]["max_datasets"]  # noqa E501
+            self.multi_dataset__matrix_cache__timelimit_s = default_config["multi_dataset"]["matrix_cache"]["timelimit_s"]  # noqa E501
 
             self.single_dataset__datapath = default_config["single_dataset"]["datapath"]
             self.single_dataset__obs_names = default_config["single_dataset"]["obs_names"]
@@ -214,8 +211,8 @@ class ServerConfig(BaseConfig):
         if self.single_dataset__datapath and self.multi_dataset__dataroot:
             raise ConfigurationError("must supply only one of datapath or dataroot")
         if self.single_dataset__datapath is None and self.multi_dataset__dataroot is None:
-            raise ConfigurationError("You must specify a datapath for a single dataset and a dataroot for multidatasets")
-
+            raise ConfigurationError(
+                "You must specify a datapath for a single dataset and a dataroot for multidatasets")
 
     def handle_single_dataset(self, context):
         self.check_attr("single_dataset__datapath", (str, type(None)))

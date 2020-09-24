@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 import unittest
@@ -11,8 +10,8 @@ from server.test import FIXTURES_ROOT
 def mockenv(**envvars):
     return mock.patch.dict(os.environ, envvars)
 
-class ConfigTests(unittest.TestCase):
 
+class ConfigTests(unittest.TestCase):
     tmp_fixtures_directory = os.path.join(FIXTURES_ROOT, "tmp_dir")
 
     @classmethod
@@ -83,7 +82,7 @@ class ConfigTests(unittest.TestCase):
 
   data_locator:
     s3:
-      region_name: {data_locater_region_name} # true pull from datapath/datroot, false/null -> dont set, string -> use that val
+      region_name: {data_locater_region_name}
 
   adaptor:
     cxg_adaptor:

@@ -15,8 +15,10 @@ class BaseConfigTest(ConfigTests):
         self.config.complete_config()
 
         message_list = []
+
         def noop(message):
             message_list.append(message)
+
         messagefn = noop
         self.context = dict(messagefn=messagefn, messages=message_list)
 
@@ -40,7 +42,10 @@ class BaseConfigTest(ConfigTests):
         server_changes = config.server_config.changes_from_default()
         dataset_changes = config.default_dataset_config.changes_from_default()
 
-        self.assertEqual(server_changes, [('app__verbose', True, False), ('multi_dataset__dataroot', FIXTURES_ROOT, None),  ('multi_dataset__matrix_cache__timelimit_s', 5, 30),  ('data_locator__s3__region_name', 'us-east-1', True)])
+        self.assertEqual(server_changes,
+                         [('app__verbose', True, False), ('multi_dataset__dataroot', FIXTURES_ROOT, None),
+                          ('multi_dataset__matrix_cache__timelimit_s', 5, 30),
+                          ('data_locator__s3__region_name', 'us-east-1', True)])
         self.assertEqual(dataset_changes, [('diffexp__lfc_cutoff', 0.05, 0.01)])
 
     def test_check_config_throws_error_if_attr_has_not_been_checked(self):

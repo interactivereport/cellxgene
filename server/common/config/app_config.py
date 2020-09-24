@@ -20,7 +20,8 @@ class AppConfig(object):
     def __init__(self):
 
         # the default configuration (see default_config.py)
-        ## TODO @madison -- if we always read from the default config (hard coded path) can we set those values as defaults within the config class?
+        # TODO @madison -- if we always read from the default config (hard coded path) can we set those values as
+        #  defaults within the config class?
         self.default_config = self.get_default_config()
         # the server configuration
         self.server_config = ServerConfig(self, self.default_config["server"])

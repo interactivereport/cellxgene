@@ -52,7 +52,7 @@ def handle_config_from_secret(app_config):
         val = secrets.get(key)
         if val:
             logging.info(f"set {attr} from secret")
-            app_config.update_server_config(**{attr : val})
+            app_config.update_server_config(**{attr: val})
 
     # update default dataset configuration attributes
     for key, attr in default_dataset_attrs:
@@ -64,4 +64,4 @@ def handle_config_from_secret(app_config):
         val = secrets.get(key)
         if val:
             logging.info(f"set {attr} from secret")
-            app_config.update_default_dataset_config(**{attr : val})
+            app_config.update_default_dataset_config(**{attr: val})

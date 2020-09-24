@@ -28,8 +28,10 @@ class TestServerConfig(ConfigTests):
         self.config.complete_config()
 
         message_list = []
+
         def noop(message):
             message_list.append(message)
+
         messagefn = noop
         self.context = dict(messagefn=messagefn, messages=message_list)
 
@@ -56,15 +58,17 @@ class TestServerConfig(ConfigTests):
         with self.assertRaises(ConfigurationError):
             config.server_config.handle_app(self.context)
 
-    def test_handle_data_locator_works_for_default_types(self):
-        ## Default config
+    @patch('server.common.config.server_config.discover_s3_region_name')
+    def test_handle_data_locator_works_for_default_types(self, mock_discover_region_name):
+        mock_discover_region_name.return_value = None
+        # Default config
         self.assertEqual(self.config.server_config.data_locator__s3__region_name, None)
         # hard coded
         config = self.get_config()
         self.assertEqual(config.server_config.data_locator__s3__region_name, "us-east-1")
-        ## incorrectly formatted
-        dataroot= {
-            "d1": {"base_url": "set1","dataroot": "/path/to/set1_datasets/"},
+        # incorrectly formatted
+        dataroot = {
+            "d1": {"base_url": "set1", "dataroot": "/path/to/set1_datasets/"},
             "d2": {"base_url": "set2/subdir", "dataroot": "s3://shouldnt/work"}
         }
         file_name = self.custom_app_config(
@@ -123,7 +127,8 @@ class TestServerConfig(ConfigTests):
 
     def test_handle_data_source__errors_when_passed_zero_or_two_dataroots(self):
         file_name = self.custom_app_config(
-            dataroot=f"{FIXTURES_ROOT}", config_file_name="two_data_roots.yml", dataset_datapath=f"{FIXTURES_ROOT}/pbmc3k-CSC-gz.h5ad")
+            dataroot=f"{FIXTURES_ROOT}", config_file_name="two_data_roots.yml",
+            dataset_datapath=f"{FIXTURES_ROOT}/pbmc3k-CSC-gz.h5ad")
         config = AppConfig()
         config.update_from_config_file(file_name)
         with self.assertRaises(ConfigurationError):
@@ -182,10 +187,9 @@ class TestServerConfig(ConfigTests):
         web_base_url = config.server_config.get_web_base_url()
         self.assertEqual(web_base_url, "www.api_base.com")
 
-
     def test_config_for_single_dataset(self):
         file_name = self.custom_app_config(config_file_name="single_dataset.yml",
-            dataset_datapath=f"{FIXTURES_ROOT}/pbmc3k.cxg")
+                                           dataset_datapath=f"{FIXTURES_ROOT}/pbmc3k.cxg")
         config = AppConfig()
         config.update_from_config_file(file_name)
         config.server_config.handle_single_dataset(self.context)

@@ -1,7 +1,6 @@
 import os
 from os.path import splitext, isdir
 
-import server.compute
 from server.common.annotations.hosted_tiledb import AnnotationsHostedTileDB
 from server.common.annotations.local_file_csv import AnnotationsLocalFile
 from server.common.config.base_config import BaseConfig
@@ -9,7 +8,6 @@ from server.common.errors import ConfigurationError, OntologyLoadFailure
 from server.compute.scanpy import get_scanpy_module
 from server.data_common.matrix_loader import MatrixDataLoader, MatrixDataType
 from server.db.db_utils import DbUtils
-
 
 
 class DatasetConfig(BaseConfig):
@@ -30,13 +28,12 @@ class DatasetConfig(BaseConfig):
 
             self.user_annotations__enable = default_config["user_annotations"]["enable"]
             self.user_annotations__type = default_config["user_annotations"]["type"]
-            self.user_annotations__local_file_csv__directory = default_config["user_annotations"]["local_file_csv"]["directory"]
+            self.user_annotations__local_file_csv__directory = default_config["user_annotations"]["local_file_csv"]["directory"]  # noqa E501
             self.user_annotations__local_file_csv__file = default_config["user_annotations"]["local_file_csv"]["file"]
             self.user_annotations__ontology__enable = default_config["user_annotations"]["ontology"]["enable"]
-            self.user_annotations__ontology__obo_location = default_config["user_annotations"]["ontology"]["obo_location"]
-            self.user_annotations__hosted_tiledb_array__db_uri = default_config["user_annotations"]["hosted_tiledb_array"]["db_uri"]
-            self.user_annotations__hosted_tiledb_array__hosted_file_directory = \
-                default_config["user_annotations"][ "hosted_tiledb_array" ][ "hosted_file_directory" ]  # noqa E501
+            self.user_annotations__ontology__obo_location = default_config["user_annotations"]["ontology"]["obo_location"]  # noqa E501
+            self.user_annotations__hosted_tiledb_array__db_uri = default_config["user_annotations"]["hosted_tiledb_array"]["db_uri"]  # noqa E501
+            self.user_annotations__hosted_tiledb_array__hosted_file_directory = default_config["user_annotations"]["hosted_tiledb_array"]["hosted_file_directory"]  # noqa E501
 
             self.embeddings__names = default_config["embeddings"]["names"]
             self.embeddings__enable_reembedding = default_config["embeddings"]["enable_reembedding"]
@@ -100,7 +97,8 @@ class DatasetConfig(BaseConfig):
                 server_config.auth.is_valid_authentication_type()
             except Exception as e:
                 auth_type = server_config.authentication__type
-                raise ConfigurationError(f"authentication method {auth_type} is not compatible with user annotations: {e}")
+                raise ConfigurationError(
+                    f"authentication method {auth_type} is not compatible with user annotations: {e}")
 
             if self.user_annotations__type == "local_file_csv":
                 self.handle_local_file_csv_annotations()
@@ -134,7 +132,6 @@ class DatasetConfig(BaseConfig):
         # so that we can remove errors early in the process.
         server_config = self.app_config.server_config
         if server_config.single_dataset__datapath and self.user_annotations__local_file_csv__file:
-
             with server_config.matrix_data_cache_manager.data_adaptor(
                     self.tag, server_config.single_dataset__datapath, self.app_config
             ) as data_adaptor:

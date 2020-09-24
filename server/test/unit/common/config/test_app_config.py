@@ -19,8 +19,10 @@ class AppConfigTest(ConfigTests):
         self.config.complete_config()
 
         message_list = []
+
         def noop(message):
             message_list.append(message)
+
         messagefn = noop
         self.context = dict(messagefn=messagefn, messages=message_list)
 
@@ -38,7 +40,8 @@ class AppConfigTest(ConfigTests):
             yaml_config = yaml.safe_load(default_config)
 
         self.assertEqual(yaml_config['server']['app']['verbose'], app_default_config['server']['app']['verbose'])
-        self.assertEqual(yaml_config['server']['authentication']['type'], app_default_config['server']['authentication']['type'])
+        self.assertEqual(yaml_config['server']['authentication']['type'],
+                         app_default_config['server']['authentication']['type'])
 
     def test_init_app_config_pulls_in_default_server_and_dataset_configurations(self):
         config = AppConfig()
@@ -48,7 +51,8 @@ class AppConfigTest(ConfigTests):
 
         self.assertEqual(yaml_config['server']['app']['verbose'], config.server_config.app__verbose)
         self.assertEqual(yaml_config['server']['authentication']['type'], config.server_config.authentication__type)
-        self.assertEqual(yaml_config['dataset']['diffexp']['lfc_cutoff'], config.default_dataset_config.diffexp__lfc_cutoff)
+        self.assertEqual(yaml_config['dataset']['diffexp']['lfc_cutoff'],
+                         config.default_dataset_config.diffexp__lfc_cutoff)
 
     def test_get_dataset_config_handles_single_datasets(self):
         datapath = f"{FIXTURES_ROOT}/1e4dfec4-c0b2-46ad-a04e-ff3ffb3c0a8f.h5ad"
@@ -56,7 +60,7 @@ class AppConfigTest(ConfigTests):
             dataset_datapath=datapath, config_file_name=self.config_file_name)
         config = AppConfig()
         config.update_from_config_file(file_name)
-        self.assertEqual(config.server_config.single_dataset__datapath, datapath )
+        self.assertEqual(config.server_config.single_dataset__datapath, datapath)
 
     def test_update_server_config_updates_server_config_and_config_status(self):
         config = self.get_config()
@@ -138,4 +142,3 @@ class AppConfigTest(ConfigTests):
             dataset_changes = app_config.default_dataset_config.changes_from_default()
             self.assertEqual(server_changes, [])
             self.assertEqual(dataset_changes, [("user_annotations__enable", False, True)])
-
